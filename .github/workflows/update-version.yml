@@ -1,0 +1,60 @@
+---
+name: 'Check for a new upstream version'
+on:
+  workflow_call:
+    inputs:
+      app_name:
+          required: true
+          type: 'string'
+      json_url:
+          required: true
+          type: 'string'
+      json_filter:
+          required: false
+          type: 'string'
+      json_version_keyname:
+          required: true
+          type: 'string'
+      json_description_keyname:
+          required: true
+          type: 'string'
+      targets:
+        required: true
+        type: 'string'
+
+jobs:
+  update-version:
+    name: 'Update version'
+    runs-on: 'ubuntu-22.04'
+    permissions:
+      contents: 'write'
+      pull-requests: 'write'
+    steps:
+      - name: 'Checkout the codebase'
+        uses: 'actions/checkout@v7'
+
+      - name: 'Set up Python 3'
+        uses: 'actions/setup-python@v7'
+        with:
+          python-version: '3.12'
+
+      - name: 'Install dependencies'
+        run: |
+          pip3 install --no-cache-dir -r requirements.txt
+
+      - name: 'Update version'
+        run: |
+          TARGET_ARGS=""
+          for target in ${{ inputs.targets }}; do
+            TARGET_ARGS="$TARGET_ARGS --target $target"
+          done
+
+          python3 main.py \
+            --app ${{ inputs.app_name }} \
+            --url ${{ inputs.json_url }} \
+            --filter ${{ inputs.json_filter }} \
+            --version-keyname ${{ inputs.json_version_keyname }} \
+            --description-keyname ${{ inputs.json_description_keyname }} \
+            $TARGET_ARGS
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

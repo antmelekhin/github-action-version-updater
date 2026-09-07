@@ -1,0 +1,5 @@
+GitPython
+jmespath
+packaging
+requests
+ruamel.yaml

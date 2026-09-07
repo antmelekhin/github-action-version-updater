@@ -1,0 +1,6 @@
+# Mac dev files
+.DS_Store
+
+# Python temp files
+*.pyc
+__pycache__
