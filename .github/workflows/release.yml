@@ -1,16 +1,13 @@
 ---
 name: 'Release'
 on:
-  workflow_run:
-    workflows: ['Molecule']
-    types: ['completed']
+  push:
     branches: ['main']
 
 jobs:
   release:
     name: 'Release'
     runs-on: 'ubuntu-22.04'
-    if: ${{ github.repository_owner == 'antmelekhin' && github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: 'Checkout the codebase'
         uses: 'actions/checkout@v4'
